@@ -6,7 +6,7 @@ import { Switch } from "@components/Switch"
 import { Block } from "@components/Block"
 import { ColorPalette } from "@components/ColorPalette"
 import { highlightCSS, highlightJSON } from "@/utils/highlight"
-
+import { Copy, Check, Download } from "lucide-react"
 import {
   getExportOptions,
   toCss,
@@ -35,6 +35,14 @@ function App() {
     switchAddPrefixCollection: {
       value: true,
       label: "Incluir collection"
+    },
+    buttonCopy: {
+      icon: <Copy size={16} />,
+      text: "Copiar código"
+    },
+    buttonDownload: {
+      icon: <Download size={16} />,
+      text: "Descargar"
     }
   })
 
@@ -263,6 +271,18 @@ function App() {
 
   const handleClickCopy = () => {
     const textToCopy = uiConfig.panelCode
+
+    const initialButtonState = {
+      icon: <Copy size={16} />,
+      text: "Copiar código"
+    }
+    const copiedButtonState = {
+      icon: <Check size={16} />,
+      text: "Copiado"
+    }
+
+    setUiConfig(prev => ({ ...prev, buttonCopy: copiedButtonState }))
+
     if (!navigator.clipboard) {
       const textArea = document.createElement("textarea")
       textArea.value = textToCopy
@@ -271,9 +291,15 @@ function App() {
       // @ts-ignore: 'execCommand' is deprecated, but used as a fallback.
       document.execCommand("copy")
       document.body.removeChild(textArea)
-      return
+    } else {
+      navigator.clipboard.writeText(textToCopy).catch(err => {
+        console.error("Failed to copy: ", err)
+      })
     }
-    navigator.clipboard.writeText(textToCopy)
+
+    setTimeout(() => {
+      setUiConfig(prev => ({ ...prev, buttonCopy: initialButtonState }))
+    }, 3000)
   }
 
   const handleClickDownload = () => {
@@ -379,7 +405,7 @@ function App() {
                   {/* Render - end */}
                 </Block.Col>
                 <Block.Col className="align-v">
-                  <div className="m-b-1">
+                  <div className="m-b-1 w-full">
                     <h2>Opciones</h2>
                     {["Css", "Color"].includes(uiConfig.tab.index) && (
                       <div className="w-full">
@@ -411,9 +437,10 @@ function App() {
                     size="medium"
                     fullWidth
                     className="m-b-1"
+                    startIcon={uiConfig.buttonCopy.icon}
                     onClick={() => handleClickCopy()}
                   >
-                    Copy
+                    {uiConfig.buttonCopy.text}
                   </Button>
 
                   <Button
@@ -421,9 +448,10 @@ function App() {
                     size="large"
                     fullWidth
                     className="m-b-2"
+                    startIcon={uiConfig.buttonDownload.icon}
                     onClick={() => handleClickDownload()}
                   >
-                    Descarga
+                    {uiConfig.buttonDownload.text}
                   </Button>
                 </Block.Col>
               </Block>

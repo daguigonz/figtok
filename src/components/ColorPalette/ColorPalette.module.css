@@ -11,6 +11,7 @@
   grid-template-columns: 65% 1fr 1fr;
   gap: 10px;
   align-items: start;
+  text-align: left;
   margin-bottom: 1rem;
 }
 

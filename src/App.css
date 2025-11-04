@@ -24,8 +24,9 @@
   --color-background-inverso: none;
 
   /* Colores de borde y división */
-  --color-input: #383838;
-  --color-border: #444444;
+  --color-input: var(--color-smoke);
+
+  --color-border: var(--color-gray);
   --color-border-light: #444444;
   --color-divider: #444444;
 }

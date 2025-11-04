@@ -1,31 +1,83 @@
-import { Meta, ColorPalette, ColorItem } from "@storybook/addon-docs/blocks"
+import { Meta, ColorItem } from "@storybook/addon-docs/blocks"
+import { ColorPalette } from "@components/ColorPalette"
+import "@/App.css"
+import "@/css/reset.css"
+import "@/css/utils.css"
 import { Block } from "@components/Block"
+import { Button } from "@components/Button"
+import { Switch } from "@components/Switch"
+import "./themeStorie.css"
+import { palette_colors } from "./color-data.ts"
 
-<Meta title="Intro" /># FigTok The purpose of this document is to present the
-visual proposal for the development and testing of interfaces and components for
-the FigTok plugin, specifically designed to integrate with Figma. This document
-serves as a reference to ensure visual, structural, and user experience
-consistency throughout the product development process.
+<Meta title="Intro" />
+
+<div class="t-center">
+![FigTok Logo](/assets/logo-color.png)
+
+
+![Features](/assets/featured.png)
+</div>
+
+# Intro
+FigTok is a free plugin that converts Figma design tokens into CSS, JSON, and more. Perfect for designers and developers looking for visual consistency and fast delivery. Customize prefixes, export instantly, and copy with one click. Simple, fast, and productive.
 
 You can view the current project interfaces at the following link:
 [Figma file](https://www.figma.com/file/3r2G00brulOwr9j7F6JF59/Figma-Design-System?node-id=0%3A1)
 
-### **Resources**
 
-Note: this package is not used in Storybook's UI, but the visual design is identical.
+## Content
 
-- [Github FigTok](https://github.com/daguigonz/figfokn)
-- [Diseño ❤️](https://www.figma.com/file/3r2G00brulOwr9j7F6JF59/Figma-Design-System?node-id=0%3A1)
+<div class="grid-container">
+  <div class="t-center">
+    ### Button
+    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginBottom: '1rem' }}>
+      <Button variant="primary" size="small">Primary</Button>
+      <Button variant="secondary" size="small">Secondary</Button>
+      <Button variant="danger" size="small">Danger</Button>
+    </div>
+  </div>
+  <div class="t-center">
+    ### Switch
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '10px 0', marginBottom: '1rem' }}>
+      <Switch id="intro-switch" />
+    </div>
+  </div>
+  <div class="t-center">
+    ### Color Palette
+    <ColorPalette variant="base" values={palette_colors} />
+  </div>
+</div>
 
-## Index document
+<br />
 
-- [Desing Tokens](?path=/docs/desing-tokens--docs)
-- Components
-  - [Button](?path=/docs/components-button--docs)
-  - [Banner](Banner)
-  - [Block](Block)
+## Objectives & Benefits
+<br />
+<div class="grid-container" >
+  <div class="">
 
-## Made in
+  ### Consistency
 
-- [Github - daguigonz](https://github.com/daguigonz)
-- [Instagram - @daguigonz](https://instagram.com/daguigonz)
+  The user interface is built from a set of modular components like `Button`, `Switch`, and `Block`. By reusing these core elements, we ensure a consistent visual language and user experience across the entire plugin, from layout to interaction.
+
+  </div>
+
+  <div class="">
+  ### Collaboration
+
+  A well-documented component library acts as a shared resource for the development team. This common ground simplifies communication, streamlines the integration of new features, and makes the codebase easier to understand and contribute to.
+
+  </div>
+
+  <div class="">
+  ### Efficiency
+
+  By breaking the UI down into minimal, reusable components, we significantly increase development speed. This approach reduces redundant code, simplifies testing, and allows for rapid prototyping and iteration of new interface designs.
+  
+  </div>
+</div>
+
+
+
+
+
+
