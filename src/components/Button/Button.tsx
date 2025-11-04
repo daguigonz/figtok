@@ -42,9 +42,9 @@ export const Button = forwardRef<ButtonRef, ButtonProps>(
       size,
       fullWidth,
       isLoading = false,
+      children,
       startIcon,
       endIcon,
-      children,
       disabled,
       onClick,
       ...props
@@ -75,12 +75,9 @@ export const Button = forwardRef<ButtonRef, ButtonProps>(
         data-loading={isLoading ? "true" : undefined}
         {...props}
       >
-        {isLoading && <span className={styles.loader} aria-hidden="true" />}
-
         {!isLoading && startIcon && (
           <span className={styles.startIcon}>{startIcon}</span>
         )}
-
         {children && <span className={styles.content}>{children}</span>}
 
         {!isLoading && endIcon && (

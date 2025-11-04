@@ -1,5 +1,5 @@
 const escapeHtml = (text: string): string => {
-  const map = {
+  const map: { [key: string]: string } = {
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",

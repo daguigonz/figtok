@@ -95,8 +95,8 @@
 
 .outline {
   background-color: transparent;
-  border: 1px solid var(--color-white);
-  color: var(--color-white);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
 }
 
 .outline:hover:not(:disabled):not([data-loading]) {

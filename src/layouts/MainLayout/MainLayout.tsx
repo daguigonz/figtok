@@ -38,7 +38,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
           </Button>
           <a
             className="d-btn link"
-            href="mailto:figtok@aguirredaniels.com"
+            href="mailto:yo@aguirredaniels.com"
             target="_blank"
           >
             Envíanos tu feedback
