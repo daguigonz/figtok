@@ -5,7 +5,8 @@ import { Button } from "@components/Button"
 import { Switch } from "@components/Switch"
 import { Block } from "@components/Block"
 import { ColorPalette } from "@components/ColorPalette"
-
+import { highlightCSS, highlightJSON } from "@/utils/highlight"
+import { Copy, Check, Download } from "lucide-react"
 import {
   getExportOptions,
   toCss,
@@ -34,6 +35,14 @@ function App() {
     switchAddPrefixCollection: {
       value: true,
       label: "Incluir collection"
+    },
+    buttonCopy: {
+      icon: <Copy size={16} />,
+      text: "Copiar código"
+    },
+    buttonDownload: {
+      icon: <Download size={16} />,
+      text: "Descargar"
     }
   })
 
@@ -50,6 +59,20 @@ function App() {
       callBackFigma(event)
     }
   }, [])
+
+  // Handles resizing the plugin window to fit its content.
+  useEffect(() => {
+    // Only attempt to resize if the main content is rendered (i.e., not loading).
+    if (!appConfig.load) {
+      // Use a timeout to ensure that the DOM has been fully updated and painted
+      // after a state change before we measure its height.
+      const timerId = setTimeout(() => {
+        resizeToContent()
+      }, 100) // A small delay like 100ms is usually sufficient.
+
+      return () => clearTimeout(timerId)
+    }
+  }, [appConfig.load, uiConfig.tab.index, uiConfig.panelCode, dataFigma])
 
   useEffect(() => {
     // Re-run the export process whenever the relevant config or data changes.
@@ -85,6 +108,37 @@ function App() {
   }
 
   /**
+   * Ask the Figma main thread to resize the plugin UI to a given height.
+   */
+  const requestUiResize = (height: number) => {
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "ui-resize",
+          height
+        }
+      },
+      "*"
+    )
+  }
+
+  /**
+   * Calculate current UI height and request resize.
+   *
+   * This function measures the scroll height of the main application container
+   * and sends a message to the Figma plugin's main thread to resize the UI window.
+   * This is the standard method for achieving "auto-height" behavior in Figma plugins.
+   */
+  const resizeToContent = () => {
+    const root = document.getElementById("figma-app")
+    console.log("root", root)
+
+    if (root) {
+      requestUiResize(root.scrollHeight)
+    }
+  }
+
+  /**
    * Listener for messages sent from the Figma plugin to the UI.
    *
    * This function acts as the central dispatcher for plugin-to-UI communication,
@@ -116,7 +170,7 @@ function App() {
           ...appConfig,
           load: false
         })
-      }, 2000)
+      }, 300)
     } else if (message.type === "error") {
       console.log("error", message.message)
     } else {
@@ -215,6 +269,67 @@ function App() {
     }))
   }
 
+  const handleClickCopy = () => {
+    const textToCopy = uiConfig.panelCode
+
+    const initialButtonState = {
+      icon: <Copy size={16} />,
+      text: "Copiar código"
+    }
+    const copiedButtonState = {
+      icon: <Check size={16} />,
+      text: "Copiado"
+    }
+
+    setUiConfig(prev => ({ ...prev, buttonCopy: copiedButtonState }))
+
+    if (!navigator.clipboard) {
+      const textArea = document.createElement("textarea")
+      textArea.value = textToCopy
+      document.body.appendChild(textArea)
+      textArea.select()
+      // @ts-ignore: 'execCommand' is deprecated, but used as a fallback.
+      document.execCommand("copy")
+      document.body.removeChild(textArea)
+    } else {
+      navigator.clipboard.writeText(textToCopy).catch(err => {
+        console.error("Failed to copy: ", err)
+      })
+    }
+
+    setTimeout(() => {
+      setUiConfig(prev => ({ ...prev, buttonCopy: initialButtonState }))
+    }, 3000)
+  }
+
+  const handleClickDownload = () => {
+    const tab = uiConfig.tab.index
+    const content = uiConfig.panelCode
+    let filename = "tokens"
+    let mimeType = ""
+
+    if (tab === "Css") {
+      filename = "tokens.css"
+      mimeType = "text/css"
+    } else if (tab === "Tokens") {
+      filename = "tokens.json"
+      mimeType = "application/json"
+    } else {
+      // Nothing to download for other tabs
+      return
+    }
+
+    const blob = new Blob([content], { type: mimeType })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <>
       {appConfig.load ? (
@@ -224,92 +339,125 @@ function App() {
           <Loading.Text> Cargando datos ...</Loading.Text>
         </div>
       ) : (
-        <MainLayout>
-          <div className="text">
-            FigTok convierte design tokens de Figma en CSS, JSON y más. Para
-            diseñadores y developers que quieren rapidez y consistencia.
-            Personaliza, exporta y copia fácil.
-          </div>
-
-          <Block variant="nowrap">
-            <MainLayout.Tabs className="">
-              {optionsExport.map((option, index) => (
-                <Button
-                  variant={uiConfig.tab.index === option ? "active" : "outline"}
-                  onClick={() => handleSelectOptionExport(option)}
-                  key={index}
-                >
-                  {option}
+        <div id="figma-app">
+          {dataFigma.length === 0 && (
+            <MainLayout>
+              <Block
+                className="disabled t-center p-t-b-3"
+                variant="grid"
+                col={"col_100"}
+              >
+                <h2> No encontramos variables en el archivo</h2>
+                <Button variant="outline" className="m-auto" size="medium">
+                  Volver a intentar
                 </Button>
-              ))}
-            </MainLayout.Tabs>
-          </Block>
+                Aún no has creado una variable dentro de este proyecto. FigTok
+                genera tokens tomando esta información desde el archivo. Si
+                Necesitas mas información puedes leer el siguiente enlace.
+              </Block>
+            </MainLayout>
+          )}
 
-          <MainLayout.Hr />
-
-          <Block className="p-b-2" variant="grid" col={"col_70_20"}>
-            <Block.Col className="m-r-2">
-              {/* Render - init */}
-              {uiConfig.tab.index === "Color" && (
-                <ColorPalette
-                  variant="base"
-                  values={uiConfig.colorPalette.value}
-                />
-              )}
-
-              {["Css", "Tokens"].includes(uiConfig.tab.index) && (
-                <Block.RenderView> {uiConfig.panelCode} </Block.RenderView>
-              )}
-              {/* Render - end */}
-            </Block.Col>
-            <Block.Col className="align-v">
-              <div className="m-b-1">
-                <h2>Opciones</h2>
-                {["Css", "Color"].includes(uiConfig.tab.index) && (
-                  <div className="w-full">
-                    <label className="m-r-1">Prefijo</label>
-
-                    <input
-                      type="text"
-                      id="Name"
-                      name="Name"
-                      className="m-b-1"
-                      value={uiConfig.inputPrefix.value}
-                      onChange={e => handleInputPrefix(e)}
-                    />
-
-                    <Switch
-                      id="switch"
-                      variant="primary"
-                      checked={uiConfig.switchAddPrefixCollection.value}
-                      onChange={e => handleSwitchOnchange(e)}
-                    >
-                      {uiConfig.switchAddPrefixCollection.label}
-                    </Switch>
-                  </div>
-                )}
+          {dataFigma.length > 0 && (
+            <MainLayout>
+              <div className="text">
+                FigTok convierte design tokens de Figma en CSS, JSON y más. Para
+                diseñadores y developers que quieren rapidez y consistencia.
+                Personaliza, exporta y copia fácil.
               </div>
 
-              <Button
-                variant="outline"
-                size="medium"
-                fullWidth
-                className="m-b-1"
-              >
-                Copy
-              </Button>
+              <Block variant="nowrap">
+                <MainLayout.Tabs className="">
+                  {optionsExport.map((option, index) => (
+                    <Button
+                      variant={
+                        uiConfig.tab.index === option ? "active" : "outline"
+                      }
+                      onClick={() => handleSelectOptionExport(option)}
+                      key={index}
+                    >
+                      {option}
+                    </Button>
+                  ))}
+                </MainLayout.Tabs>
+              </Block>
 
-              <Button
-                variant="primary"
-                size="large"
-                fullWidth
-                className="m-b-2"
-              >
-                Descarga
-              </Button>
-            </Block.Col>
-          </Block>
-        </MainLayout>
+              <MainLayout.Hr />
+              <Block className="p-b-2" variant="grid" col={"col_70_20"}>
+                <Block.Col className="m-r-2">
+                  {/* Render - init */}
+                  {uiConfig.tab.index === "Color" && (
+                    <ColorPalette
+                      variant="base"
+                      values={uiConfig.colorPalette.value}
+                    />
+                  )}
+
+                  {["Css", "Tokens"].includes(uiConfig.tab.index) && (
+                    <Block.RenderView
+                      html={
+                        uiConfig.tab.index === "Css"
+                          ? highlightCSS(uiConfig.panelCode)
+                          : highlightJSON(uiConfig.panelCode)
+                      }
+                    />
+                  )}
+                  {/* Render - end */}
+                </Block.Col>
+                <Block.Col className="align-v">
+                  <div className="m-b-1 w-full">
+                    <h2>Opciones</h2>
+                    {["Css", "Color"].includes(uiConfig.tab.index) && (
+                      <div className="w-full">
+                        <label className="m-r-1">Prefijo</label>
+
+                        <input
+                          type="text"
+                          id="Name"
+                          name="Name"
+                          className="m-b-1"
+                          value={uiConfig.inputPrefix.value}
+                          onChange={e => handleInputPrefix(e)}
+                        />
+
+                        <Switch
+                          id="switch"
+                          variant="primary"
+                          checked={uiConfig.switchAddPrefixCollection.value}
+                          onChange={e => handleSwitchOnchange(e)}
+                        >
+                          {uiConfig.switchAddPrefixCollection.label}
+                        </Switch>
+                      </div>
+                    )}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="medium"
+                    fullWidth
+                    className="m-b-1"
+                    startIcon={uiConfig.buttonCopy.icon}
+                    onClick={() => handleClickCopy()}
+                  >
+                    {uiConfig.buttonCopy.text}
+                  </Button>
+
+                  <Button
+                    variant="primary"
+                    size="large"
+                    fullWidth
+                    className="m-b-2"
+                    startIcon={uiConfig.buttonDownload.icon}
+                    onClick={() => handleClickDownload()}
+                  >
+                    {uiConfig.buttonDownload.text}
+                  </Button>
+                </Block.Col>
+              </Block>
+            </MainLayout>
+          )}
+        </div>
       )}
     </>
   )

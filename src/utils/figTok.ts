@@ -5,7 +5,6 @@ import {
   ToCssParams
 } from "../interfaces/figma.interface"
 
-
 const getExportOptions = (): ExportOption[] => {
   return ["Css", "Tokens", "Color"]
 }
@@ -146,17 +145,22 @@ const applyPresets = (
             (params.filterColors && type === "color") ||
             (params.filterNumber && type === "number")
         )
-        .map(([variableName, { value, type }]: [string, { value: any; type: string }]): [string, string] => {
-          const newKey = [
-            prefix,
-            params.includeCollections ? collectionName : "",
-            variableName
-          ]
-            .filter(Boolean)
-            .join("-")
-          const newValue = type === "number" ? `${value}px` : value
-          return [newKey, newValue]
-        })
+        .map(
+          ([variableName, { value, type }]: [
+            string,
+            { value: any; type: string }
+          ]): [string, string] => {
+            const newKey = [
+              prefix,
+              params.includeCollections ? collectionName : "",
+              variableName
+            ]
+              .filter(Boolean)
+              .join("-")
+            const newValue = type === "number" ? `${value}px` : value
+            return [newKey, newValue]
+          }
+        )
   )
 
   return Object.fromEntries(newVariables)
@@ -286,7 +290,9 @@ const mergeCollectionsAndVariables = (
         }
         return undefined
       })
-      .filter((variable: any): variable is FigmaVariable => variable !== undefined)
+      .filter(
+        (variable: any): variable is FigmaVariable => variable !== undefined
+      )
 
     // Create a new collection object with the desired structure
     const newCollection: FigmaCollection = {

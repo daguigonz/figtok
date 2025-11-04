@@ -8,7 +8,7 @@ import { mergeCollectionsAndVariables } from "../src/utils/figTok"
  */
 const settingsFigmaUI = {
   themeColors: true,
-  height: 620,
+  height: 620, // Initial height
   width: 600
 }
 
@@ -28,12 +28,15 @@ figma.ui.onmessage = async (msg: any) => {
         handle_figma()
         break
 
+      case "ui-resize": {
+        resizeFigma(msg.height)
+        break
+      }
+
       default:
-        // Log the unhandled message
         console.error("Figma:", msg.type)
     }
   } catch (error) {
-    // Send error to Figma (UI)
     figma.ui.postMessage({
       type: "error",
       message: error instanceof Error ? error.message : "Unknown error"
@@ -41,14 +44,14 @@ figma.ui.onmessage = async (msg: any) => {
   }
 }
 
-/*
- * Figma listeners
- * https://www.figma.com/plugin-docs/api/properties/onmessage/
- *
- * The "onmessage" method returns an object.
- * The "type" variable can be used to identify the type of message.
- */
-async function handle_figma() {
+const resizeFigma = (newHeight: number) => {
+  const requestedHeight = Math.ceil(Number(newHeight))
+  if (!Number.isNaN(requestedHeight) && requestedHeight > 0) {
+    figma.ui.resize(settingsFigmaUI.width, requestedHeight)
+  }
+}
+
+const handle_figma = async () => {
   try {
     const collections = await figma.variables.getLocalVariableCollectionsAsync()
     const variables = await figma.variables.getLocalVariablesAsync()

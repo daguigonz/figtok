@@ -3,6 +3,7 @@ import type { Decorator } from "@storybook/react"
 import { useEffect } from "react"
 import "@/App.css"
 import "@/css/reset.css"
+import "@/css/utils.css"
 
 // @detect dark mode in the preview
 const withTheme: Decorator = (Story, context) => {
@@ -40,14 +41,11 @@ const preview: Preview = {
       }
     },
     a11y: {
-      test: "todo"
+      run: true
     },
     options: {
       storySort: {
-        order: [
-          "Intro", // Primer .mdx
-          "Components"
-        ]
+        order: ["Intro", "Design Tokens", "Components"]
       }
     },
     backgrounds: {

@@ -31,7 +31,6 @@ body {
   align-content: space-between;
   justify-content: space-evenly;
   align-items: stretch;
-  height: 100%;
 }
 
 h2 {
@@ -42,17 +41,22 @@ h2 {
 
 label {
   opacity: 0.6;
-  margin-bottom: var(--space-1);
+  margin-bottom: var(--space-half-2);
   display: block;
 }
 
 input {
-  color: var(--color-white);
+  color: var(--color-border);
   opacity: 0.8;
+  color: var(--color-text);
   border-radius: 0.375rem;
   border: none;
-  padding: calc(var(--space-1) - 0.5rem) var(--space-1);
+  padding: calc(var(--space-1) - 0.25rem) var(--space-1);
   background-color: var(--color-input);
+}
+
+.disabled {
+  opacity: 0.5;
 }
 
 footer {
@@ -81,6 +85,11 @@ footer {
   background-color: var(--color-border);
   opacity: 0.5;
   border-radius: 25%;
+}
+
+footer button {
+  border-color: var(--color-white) !important;
+  color: var(--color-white) !important;
 }
 
 footer nav {

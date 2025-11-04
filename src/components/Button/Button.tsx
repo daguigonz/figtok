@@ -42,9 +42,9 @@ export const Button = forwardRef<ButtonRef, ButtonProps>(
       size,
       fullWidth,
       isLoading = false,
+      children,
       startIcon,
       endIcon,
-      children,
       disabled,
       onClick,
       ...props
@@ -64,25 +64,20 @@ export const Button = forwardRef<ButtonRef, ButtonProps>(
     )
 
     const isDisabled = isLoading || disabled
+    const clsWidth: string = fullWidth ? styles.fullWidth : styles.autoWidth
 
     return (
       <button
-        className={clsx(
-          buttonVariants({ variant, size, fullWidth: fullWidth }),
-          className
-        )}
+        className={clsx(buttonVariants({ variant, size }), clsWidth, className)}
         disabled={isDisabled}
         onClick={handleClick}
         aria-disabled={isDisabled}
         data-loading={isLoading ? "true" : undefined}
         {...props}
       >
-        {isLoading && <span className={styles.loader} aria-hidden="true" />}
-
         {!isLoading && startIcon && (
           <span className={styles.startIcon}>{startIcon}</span>
         )}
-
         {children && <span className={styles.content}>{children}</span>}
 
         {!isLoading && endIcon && (

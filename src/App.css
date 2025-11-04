@@ -24,8 +24,9 @@
   --color-background-inverso: none;
 
   /* Colores de borde y división */
-  --color-input: #383838;
-  --color-border: #444444;
+  --color-input: var(--color-smoke);
+
+  --color-border: var(--color-gray);
   --color-border-light: #444444;
   --color-divider: #444444;
 }
@@ -62,6 +63,23 @@
     --color-border: #444444;
     --color-border-light: #444444;
     --color-divider: #444444;
+
+    /* Syntax Highlighting (VS Code Dark+ inspired) */
+    --highlight-property: #9cdcfe;
+    --highlight-value: #b5cea8; /* Default value, numbers */
+    --highlight-variable: #9cdcfe;
+    --highlight-string: #ce9178;
+    --highlight-number: #b5cea8;
+    --highlight-bracket: #ffd700;
+    --highlight-key: #9cdcfe;
+    --highlight-brace: #ffd700;
+    --highlight-bracket-square: #da70d6;
+    --highlight-parenthesis: #87cefa;
+    --highlight-quote-single: #ce9178;
+    --highlight-quote-double: #ce9178;
+    --highlight-colon: #d4d4d4;
+    --highlight-comma: #d4d4d4;
+    --highlight-keyword: #c586c0; /* Purple for true/false/null */
   }
 }
 
@@ -96,4 +114,21 @@
   --border-width-2: 2px;
   --border-width-4: 4px;
   --border-width-8: 8px;
+
+  /* Variables de colores personalizables */
+  --highlight-property: #ff3617;
+  --highlight-value: #79c0ff;
+  --highlight-variable: #9747ff;
+  --highlight-string: #ff7b72;
+  --highlight-number: #0d99ff;
+  --highlight-bracket: #58a6ff;
+  --highlight-key: #ff3617;
+  /* Nuevas variables para elementos específicos */
+  --highlight-brace: #58a6ff;
+  --highlight-bracket-square: #58a6ff;
+  --highlight-parenthesis: #79c0ff;
+  --highlight-quote-single: #ff7b72;
+  --highlight-quote-double: #ff7b72;
+  --highlight-colon: #e6edf3;
+  --highlight-comma: #e6edf3;
 }

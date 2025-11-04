@@ -27,13 +27,90 @@
 }
 
 .renderView {
-  height: 280px;
+  height: 240px;
+
   overflow: hidden;
   overflow-y: auto;
+
+  padding: 6px 2px;
+
+  border-radius: 8px;
+  overflow-x: auto;
+  white-space: pre;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
-.renderView code {
+.renderView :global(code) {
   line-height: 1.8em;
+}
+
+.renderView :global(span.property) {
+  color: var(--highlight-property) !important;
+  font-weight: bold;
+}
+
+.renderView :global(span.value) {
+  color: var(--highlight-value);
+}
+
+.renderView :global(span.variable) {
+  color: var(--highlight-variable);
+  font-weight: bold;
+}
+
+.renderView :global(span.string) {
+  color: var(--highlight-string);
+}
+
+.renderView :global(span.number) {
+  color: var(--highlight-number);
+  font-weight: 600;
+}
+
+.renderView :global(span.bracket) {
+  color: var(--highlight-bracket);
+}
+
+.renderView :global(span.key) {
+  color: var(--highlight-key);
+  font-weight: bold;
+}
+
+.renderView :global(span.keyword) {
+  color: var(--highlight-keyword);
+}
+
+/* Nuevos estilos para elementos específicos */
+.renderView :global(.brace) {
+  color: var(--highlight-brace);
+  font-weight: bold;
+}
+
+.renderView :global(span.bracket-square) {
+  color: var(--highlight-bracket-square);
+  font-weight: bold;
+}
+
+.renderView :global(span.parenthesis) {
+  color: var(--highlight-parenthesis);
+  font-weight: bold;
+}
+
+.renderView :global(span.quote-single) {
+  color: var(--highlight-quote-single);
+}
+
+.renderView :global(span.quote-double) {
+  color: var(--highlight-quote-double);
+}
+
+.renderView :global(.colon) {
+  color: var(--highlight-colon);
+}
+
+.renderView :global(span.comma) {
+  color: var(--highlight-comma);
 }
 
 .row1 {

@@ -59,15 +59,15 @@ const Col = ({
 
 // </Block.RenderView>
 const RenderView = ({
-  children,
+  html,
   ...props
 }: {
-  children: React.ReactNode
+  html: string
   className?: string
 }) => {
   return (
     <pre className={styles.renderView} {...props}>
-      <code>{children}</code>
+      <code dangerouslySetInnerHTML={{ __html: html }} />
     </pre>
   )
 }
